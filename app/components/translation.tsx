@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Globe } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 type Mode = "scramble" | "both" | "blur";
 const modes: { value: Mode; label: string }[] = [
@@ -13,38 +14,33 @@ const modes: { value: Mode; label: string }[] = [
 const languages = ["en", "es", "fr", "it", "da"] as const;
 type Language = typeof languages[number];
 
-const content: Record<Language, { name: string; handle: string; body: string; time: string; flag: string }> = {
+const content: Record<Language, { name: string; body: string; time: string; flag: string }> = {
   en: {
     name: "Alex Morgan",
-    handle: "@alexmorgan",
     body: "Just got back from the most incredible hike. The views from the top were absolutely breathtaking — I could see for miles in every direction. Highly recommend doing this before the summer crowds arrive.",
     time: "2h ago",
     flag: "🇬🇧",
   },
   es: {
     name: "Alex Morgan",
-    handle: "@alexmorgan",
     body: "Acabo de volver de la caminata más increíble. Las vistas desde la cima eran absolutamente impresionantes — podía ver kilómetros en todas las direcciones. Muy recomendable hacer esto antes de que lleguen las multitudes de verano.",
     time: "hace 2h",
     flag: "🇪🇸",
   },
   fr: {
     name: "Alex Morgan",
-    handle: "@alexmorgan",
     body: "Je reviens tout juste de la randonnée la plus incroyable. Les vues depuis le sommet étaient absolument à couper le souffle — je pouvais voir à des kilomètres à la ronde. Je recommande vivement de le faire avant l'arrivée des foules estivales.",
     time: "il y a 2h",
     flag: "🇫🇷",
   },
   it: {
     name: "Alex Morgan",
-    handle: "@alexmorgan",
     body: "Sono appena tornato dalla escursione più incredibile. Le viste dalla cima erano assolutamente mozzafiato — riuscivo a vedere per chilometri in ogni direzione. Consiglio vivamente di farlo prima che arrivino le folle estive.",
     time: "2h fa",
     flag: "🇮🇹",
   },
   da: {
     name: "Alex Morgan",
-    handle: "@alexmorgan",
     body: "Jeg er lige kommet hjem fra den mest utrolige vandretur. Udsigten fra toppen var absolut betagende — jeg kunne se i kilometers afstand i alle retninger. Jeg anbefaler stærkt at gøre det, inden sommerens folkemasser ankommer.",
     time: "for 2t siden",
     flag: "🇩🇰",
@@ -91,23 +87,24 @@ const SliderControl = ({
 export const Translation = () => {
   const [langIndex, setLangIndex] = useState(0);
   const currentLang = languages[langIndex];
-  const { name, handle, body, time, flag } = content[currentLang];
+  const { name, body, time, flag } = content[currentLang];
 
   const [displayed, setDisplayed] = useState(body);
   const [expanded, setExpanded] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isScrambling, setIsScrambling] = useState(false);
   const [mode, setMode] = useState<Mode>("both");
+  const [optionsOpen, setOptionsOpen] = useState(false);
 
   // Animation params — state drives the UI, refs drive the effect closure
-  const [charsPerTick, setCharsPerTick] = useState(5);
-  const [blurAmount, setBlurAmount]     = useState(8);
-  const [blurFadeAt, setBlurFadeAt]     = useState(70); // % of animation at full blur
+  const [charsPerTick, setCharsPerTick] = useState(18);
+  const [blurAmount, setBlurAmount]     = useState(1);
+  const [blurFadeAt, setBlurFadeAt]     = useState(60);
 
   const modeRef         = useRef<Mode>("both");
-  const charsPerTickRef = useRef(5);
-  const blurAmountRef   = useRef(8);
-  const blurFadeAtRef   = useRef(70);
+  const charsPerTickRef = useRef(18);
+  const blurAmountRef   = useRef(1);
+  const blurFadeAtRef   = useRef(60);
 
   const blurRef  = useRef<SVGFEGaussianBlurElement>(null);
   const rafRef   = useRef<number | undefined>(undefined);
@@ -209,7 +206,7 @@ export const Translation = () => {
   const cycleLanguage = () => setLangIndex((i) => (i + 1) % languages.length);
 
   return (
-    <div className="flex flex-col gap-6 w-full max-w-sm">
+    <div className="relative w-full max-w-sm">
 
       {/* Card */}
       <div className="bg-card border border-color rounded-xl p-4 w-full flex flex-col gap-3">
@@ -222,7 +219,6 @@ export const Translation = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold label-primary leading-tight">{name}</span>
-              <span className="text-xs label-tertiary">{handle}</span>
             </div>
           </div>
           <span className="text-xs label-tertiary">{time}</span>
@@ -252,24 +248,7 @@ export const Translation = () => {
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between pt-1">
-          {/* Effect selector */}
-          <div className="flex rounded-md border border-color overflow-hidden">
-            {modes.map((m) => (
-              <button
-                key={m.value}
-                onClick={() => setMode(m.value)}
-                className={`px-2.5 py-1 text-xs font-medium transition-colors duration-150
-                  ${mode === m.value
-                    ? "bg-stone-200 dark:bg-stone-700 label-primary"
-                    : "label-tertiary hover:label-secondary"
-                  }`}
-              >
-                {m.label}
-              </button>
-            ))}
-          </div>
-
+        <div className="flex items-center justify-end pt-1">
           {/* Language toggle */}
           <button
             onClick={cycleLanguage}
@@ -285,26 +264,61 @@ export const Translation = () => {
 
       </div>
 
-      {/* Controls */}
-      <div className="flex flex-col gap-3">
-        <SliderControl
-          label="Scramble speed"
-          value={charsPerTick}
-          min={1} max={20} unit=" chars/tick"
-          onChange={(v) => { setCharsPerTick(v); charsPerTickRef.current = v; }}
-        />
-        <SliderControl
-          label="Blur amount"
-          value={blurAmount}
-          min={1} max={20} unit="px"
-          onChange={(v) => { setBlurAmount(v); blurAmountRef.current = v; }}
-        />
-        <SliderControl
-          label="Blur fade at"
-          value={blurFadeAt}
-          min={0} max={100} unit="%"
-          onChange={(v) => { setBlurFadeAt(v); blurFadeAtRef.current = v; }}
-        />
+      {/* Controls — absolutely positioned so the card doesn't shift */}
+      <div className="absolute top-full pt-4 w-full flex flex-col gap-3">
+        <button
+          onClick={() => setOptionsOpen((o) => !o)}
+          className="text-xs label-tertiary hover:label-secondary transition-colors duration-150 text-left"
+        >
+          {optionsOpen ? "Hide options ↑" : "Options ↓"}
+        </button>
+        <AnimatePresence>
+          {optionsOpen && (
+            <motion.div
+              className="flex flex-col gap-3"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.15 }}
+            >
+              {/* Effect selector */}
+              <div className="flex rounded-md border border-color overflow-hidden w-fit">
+                {modes.map((m) => (
+                  <button
+                    key={m.value}
+                    onClick={() => setMode(m.value)}
+                    className={`px-2.5 py-1 text-xs font-medium transition-colors duration-150
+                      ${mode === m.value
+                        ? "bg-stone-200 dark:bg-stone-700 label-primary"
+                        : "label-tertiary hover:label-secondary"
+                      }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+
+              <SliderControl
+                label="Scramble speed"
+                value={charsPerTick}
+                min={1} max={20} unit=" chars/tick"
+                onChange={(v) => { setCharsPerTick(v); charsPerTickRef.current = v; }}
+              />
+              <SliderControl
+                label="Blur amount"
+                value={blurAmount}
+                min={1} max={20} unit="px"
+                onChange={(v) => { setBlurAmount(v); blurAmountRef.current = v; }}
+              />
+              <SliderControl
+                label="Blur fade at"
+                value={blurFadeAt}
+                min={0} max={100} unit="%"
+                onChange={(v) => { setBlurFadeAt(v); blurFadeAtRef.current = v; }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
     </div>
