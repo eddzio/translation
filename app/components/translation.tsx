@@ -16,31 +16,31 @@ type Language = typeof languages[number];
 
 const content: Record<Language, { name: string; body: string; time: string; flag: string }> = {
   en: {
-    name: "Alex Morgan",
+    name: "Ed Orozco",
     body: "Just got back from the most incredible hike. The views from the top were absolutely breathtaking — I could see for miles in every direction. Highly recommend doing this before the summer crowds arrive.",
     time: "2h ago",
     flag: "🇬🇧",
   },
   es: {
-    name: "Alex Morgan",
+    name: "Ed Orozco",
     body: "Acabo de volver de la caminata más increíble. Las vistas desde la cima eran absolutamente impresionantes — podía ver kilómetros en todas las direcciones. Muy recomendable hacer esto antes de que lleguen las multitudes de verano.",
     time: "hace 2h",
     flag: "🇪🇸",
   },
   fr: {
-    name: "Alex Morgan",
+    name: "Ed Orozco",
     body: "Je reviens tout juste de la randonnée la plus incroyable. Les vues depuis le sommet étaient absolument à couper le souffle — je pouvais voir à des kilomètres à la ronde. Je recommande vivement de le faire avant l'arrivée des foules estivales.",
     time: "il y a 2h",
     flag: "🇫🇷",
   },
   it: {
-    name: "Alex Morgan",
+    name: "Ed Orozco",
     body: "Sono appena tornato dalla escursione più incredibile. Le viste dalla cima erano assolutamente mozzafiato — riuscivo a vedere per chilometri in ogni direzione. Consiglio vivamente di farlo prima che arrivino le folle estive.",
     time: "2h fa",
     flag: "🇮🇹",
   },
   da: {
-    name: "Alex Morgan",
+    name: "Ed Orozco",
     body: "Jeg er lige kommet hjem fra den mest utrolige vandretur. Udsigten fra toppen var absolut betagende — jeg kunne se i kilometers afstand i alle retninger. Jeg anbefaler stærkt at gøre det, inden sommerens folkemasser ankommer.",
     time: "for 2t siden",
     flag: "🇩🇰",
