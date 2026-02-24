@@ -15,19 +15,19 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Components · Ed Orozco",
-  description: "A collection of UI experiments.",
+  title: "Translation effect · Ed Orozco",
+  description: "A UI experiment.",
   openGraph: {
-    title: "Components · Ed Orozco",
-    description: "A collection of UI experiments.",
-    url: 'https://components.fun',
-    siteName: 'Components.fun',
+    title: "Translation effect · Ed Orozco",
+    description: "A UI experiment.",
+    url: 'https://translation-sigma-eight.vercel.app/',
+    siteName: 'Translation effect',
     images: [
       {
         url: '/og-image.png',  // Place this image in your public folder
         width: 1200,
         height: 630,
-        alt: 'Components.fun',
+        alt: 'Translation effect',
       },
     ],
     locale: 'en_US',
