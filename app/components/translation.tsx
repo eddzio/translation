@@ -215,7 +215,7 @@ export const Translation = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-9 h-9 rounded-full bg-stone-300 dark:bg-stone-600 flex items-center justify-center text-sm font-semibold text-stone-600 dark:text-stone-300 shrink-0">
-              AM
+              EO
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-semibold label-primary leading-tight">{name}</span>
